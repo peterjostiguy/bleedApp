@@ -32,6 +32,8 @@ class FCViewController: UIViewController, UITableViewDataSource, UITableViewDele
     UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
   // Instance variables
+  @IBOutlet weak var configButton: UIButton!
+  @IBOutlet weak var crashButton: UIButton!
   @IBOutlet weak var textField: UITextField!
   @IBOutlet weak var sendButton: UIButton!
   var ref: FIRDatabaseReference!
@@ -48,6 +50,8 @@ class FCViewController: UIViewController, UITableViewDataSource, UITableViewDele
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    configButton.isHidden = true
+    crashButton.isHidden = true
 
     self.clientTable.register(UITableViewCell.self, forCellReuseIdentifier: "tableViewCell")
 
@@ -134,9 +138,9 @@ class FCViewController: UIViewController, UITableViewDataSource, UITableViewDele
   }
 
   func loadAd() {
-    self.banner.adUnitID = kBannerAdUnitID
-    self.banner.rootViewController = self
-    self.banner.load(GADRequest())
+//    self.banner.adUnitID = kBannerAdUnitID
+//    self.banner.rootViewController = self
+//    self.banner.load(GADRequest())
   }
 
   func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -158,6 +162,7 @@ class FCViewController: UIViewController, UITableViewDataSource, UITableViewDele
     let messageSnapshot: FIRDataSnapshot! = self.messages[indexPath.row]
     let message = messageSnapshot.value as! Dictionary<String, String>
     let name = message[Constants.MessageFields.name] as String!
+    print(name)
     if let imageURL = message[Constants.MessageFields.imageURL] {
       if imageURL.hasPrefix("gs://") {
         FIRStorage.storage().reference(forURL: imageURL).data(withMaxSize: INT64_MAX){ (data, error) in
@@ -260,6 +265,7 @@ class FCViewController: UIViewController, UITableViewDataSource, UITableViewDele
   }
 
   @IBAction func signOut(_ sender: UIButton) {
+    GIDSignIn.sharedInstance().signOut()
     let firebaseAuth = FIRAuth.auth()
     do {
       try firebaseAuth?.signOut()

@@ -19,16 +19,45 @@ import UIKit
 import Firebase
 
 @objc(SignInViewController)
-class SignInViewController: UIViewController {
-
+class SignInViewController: UIViewController, GIDSignInUIDelegate {
+    
+    @IBOutlet weak var createAccount: UIButton!
+    @IBOutlet weak var emailSignIn: UIButton!
+  @IBOutlet weak var signInButton: GIDSignInButton!
+  @IBOutlet weak var getStarted: UIButton!
   @IBOutlet weak var emailField: UITextField!
   @IBOutlet weak var passwordField: UITextField!
+    @IBAction func buttonTapped(_ sender: Any) {
+        signInButton.isHidden = true
+        getStarted.isHidden = false
+    }
 
-  override func viewDidAppear(_ animated: Bool) {
+    @IBOutlet weak var passwordButton: UIButton!
+    
+    @IBAction func getStartedClick(_ sender: Any) {
+        performSegue(withIdentifier: Constants.Segues.SignInToFp, sender: nil)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
     if let user = FIRAuth.auth()?.currentUser {
       self.signedIn(user)
     }
   }
+
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        emailField.isHidden = true
+        passwordField.isHidden = true
+        getStarted.isHidden = true
+        passwordButton.isHidden = true
+        emailSignIn.isHidden = true
+        createAccount.isHidden = true
+
+        
+        GIDSignIn.sharedInstance().uiDelegate = self
+
+    }
 
   @IBAction func didTapSignIn(_ sender: AnyObject) {
     // Sign In with credentials.
